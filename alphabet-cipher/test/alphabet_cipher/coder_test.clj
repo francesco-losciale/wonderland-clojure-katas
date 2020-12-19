@@ -7,6 +7,19 @@
     (is (= "sconessconessco"
            (resize-keyword "scones" "meetmebythetree")))))
 
+(deftest test-get-index-of-char
+  (testing "can get index of char in array"
+    (is (= 4 (get-index \t "meetmebythetree")))
+    (is (= 13 (get-index \m "abcdefghijklmnopqrstuvwxyz")))
+    (is (= 19 (get-index \s "abcdefghijklmnopqrstuvwxyz")))
+    ))
+
+(deftest test-rotate
+  (testing "can resize keyword to match message length"
+    (is (= "bca" (rotate "abc" 1)))
+    (is (= "cab" (rotate "abc" 2)))))
+
+
 (deftest test-encode
   (testing "can encode a message with a secret keyword"
     (is (= "hmkbxebpxpmyllyrxiiqtoltfgzzv"
