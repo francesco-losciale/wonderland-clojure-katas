@@ -2,6 +2,11 @@
   (:require [clojure.test :refer :all]
             [alphabet-cipher.coder :refer :all]))
 
+(deftest test-resize-keyword
+  (testing "can resize keyword to match message length"
+    (is (= "sconessconessco"
+           (resize-keyword "scones" "meetmebythetree")))))
+
 (deftest test-encode
   (testing "can encode a message with a secret keyword"
     (is (= "hmkbxebpxpmyllyrxiiqtoltfgzzv"
