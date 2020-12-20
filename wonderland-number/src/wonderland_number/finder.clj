@@ -4,14 +4,7 @@
   (= (set (str n1)) (set (str n2))))
 
 (defn is-magic? [n]
-  (and
-    (has-same-digits? n (* n 2))
-    (has-same-digits? n (* n 3))
-    (has-same-digits? n (* n 4))
-    (has-same-digits? n (* n 5))
-    (has-same-digits? n (* n 6))
-    )
-  )
+  (every? #(has-same-digits? n (* n %)) (range 2 7)))
 
 (defn wonderland-number []
   (first (filter is-magic? (range 100000 999999)))
