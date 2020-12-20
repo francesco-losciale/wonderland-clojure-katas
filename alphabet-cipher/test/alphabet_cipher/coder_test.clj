@@ -34,6 +34,15 @@
     (is (= "meetmebythetree"
            (decode "scones" "egsgqwtahuiljgs")))))
 
+(deftest test-rep-string
+  (testing "can extract sca from scascasc"
+    (is (= "sca"
+           (rep-string "scascascasc")))
+    (is (= "scones"
+           (rep-string "sconessconessconesscones")))
+    (is (= "abcabcx"
+           (rep-string "abcabcxabcabcxa")))))
+
 (deftest test-decipher
   (testing "can extract the secret keyword given an encrypted message and the original message"
     (is (= "vigilance"

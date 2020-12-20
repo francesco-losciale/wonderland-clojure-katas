@@ -46,6 +46,28 @@
            )
     ))
 
-(defn decipher [cipher message]
-  "decypherme")
+(defn rep-string [s]
+  (let [mid (/ (count s) 2)
+        left-half (apply str (first (split-at mid s)))
+        right-half (apply str (second (split-at mid s)))]
+    (if (empty? s)
+      []
+      (if (= left-half right-half)
+        left-half
+        (rep-string (apply str (drop-last s)))
+        )
+      )
+    ))
 
+(defn decipher [cipher message]
+  (let [alphabet "abcdefghijklmnopqrstuvwxyz"]
+    (rep-string
+      (apply str
+             (for [[k m] (map str message cipher)]
+               (let [rotations (get-index k alphabet)
+                     index (get-index m (rotate alphabet rotations))]
+                 (nth alphabet index))
+               )
+             )
+    )
+    ))
