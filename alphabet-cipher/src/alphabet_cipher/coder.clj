@@ -46,13 +46,21 @@
            )
     ))
 
+(defn split-in-two [s]
+  (let [mid (/ (count s) 2)]
+    (split-at mid s)))
+
 (defn rep-string [s]
-  (let [mid (/ (count s) 2)
-        left-half (apply str (first (split-at mid s)))
-        right-half (apply str (second (split-at mid s)))]
+  (let [left-half (apply str (first (split-in-two s)))
+        right-half (apply str (second (split-in-two s)))]
     (if (empty? s)
       []
-      (if (= left-half right-half)
+      (if (and
+            (= left-half right-half)
+            (not (=
+                   (first (split-in-two left-half))
+                   (second (split-in-two left-half)))
+                 ))
         left-half
         (rep-string (apply str (drop-last s)))
         )
