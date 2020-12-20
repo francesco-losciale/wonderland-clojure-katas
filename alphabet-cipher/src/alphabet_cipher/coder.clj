@@ -14,15 +14,6 @@
     s))
 
 (defn encode [keyword message]
-  (comment
-    (def alphabet "abcdefghijklmnopqrstuvwxyz")
-    (def m "m")
-    (def k "s")
-    (def rotations (get-index m alphabet))
-    (def index (get-index k alphabet))
-    (def keyword "scones")
-    (def adjusted-keyword (resize-keyword keyword message))
-    (def message "meetmebythetree"))
   (let [alphabet "abcdefghijklmnopqrstuvwxyz"
         adjusted-keyword (resize-keyword keyword message)]
     (apply str
