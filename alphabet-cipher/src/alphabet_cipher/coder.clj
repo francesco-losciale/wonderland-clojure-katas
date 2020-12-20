@@ -34,8 +34,17 @@
            )
     ))
 
-(defn decode [keyword message]
-  "decodeme")
+(defn decode [keyword enc-message]
+  (let [alphabet "abcdefghijklmnopqrstuvwxyz"
+        adjusted-keyword (resize-keyword keyword enc-message)]
+    (apply str
+           (for [[k m] (map str adjusted-keyword enc-message)]
+             (let [rotations (get-index k alphabet)
+                   index (get-index m (rotate alphabet rotations))]
+               (nth alphabet index))
+             )
+           )
+    ))
 
 (defn decipher [cipher message]
   "decypherme")
