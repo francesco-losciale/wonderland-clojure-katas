@@ -9,9 +9,9 @@
 
 (deftest test-get-index-of-char
   (testing "can get index of char in array"
-    (is (= 4 (get-index \t "meetmebythetree")))
-    (is (= 13 (get-index \m "abcdefghijklmnopqrstuvwxyz")))
-    (is (= 19 (get-index \s "abcdefghijklmnopqrstuvwxyz")))
+    (is (= 3 (get-index \t "meetmebythetree")))
+    (is (= 12 (get-index \m "abcdefghijklmnopqrstuvwxyz")))
+    (is (= 18 (get-index \s "abcdefghijklmnopqrstuvwxyz")))
     ))
 
 (deftest test-rotate

@@ -6,7 +6,7 @@
   (apply str (take (count message) (cycle keyword))))
 
 (defn get-index [c str]
-  (inc (index-of str c)))
+  (index-of str c))
 
 (defn rotate [s n]
   (if (> n 0)
@@ -18,17 +18,19 @@
     (def alphabet "abcdefghijklmnopqrstuvwxyz")
     (def m "m")
     (def k "s")
-    (def rotations (dec (get-index m alphabet)))
+    (def rotations (get-index m alphabet))
     (def index (get-index k alphabet))
-    (def keyword "s")
-    (def message "m"))
+    (def keyword "scones")
+    (def adjusted-keyword (resize-keyword keyword message))
+    (def message "meetmebythetree"))
   (let [alphabet "abcdefghijklmnopqrstuvwxyz"
-        keyword (resize-keyword keyword message)]
+        adjusted-keyword (resize-keyword keyword message)]
     (apply str
-           (for [[k m] [(map str keyword message)]]
+           (for [[k m] (map str adjusted-keyword message)]
              (let [index (get-index k alphabet)
-                   rotations (dec (get-index m alphabet))]
-               (nth (rotate alphabet rotations) (dec index))))
+                   rotations (get-index m alphabet)]
+               (nth (rotate alphabet rotations) index))
+             )
            )
     ))
 
