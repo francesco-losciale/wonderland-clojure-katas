@@ -64,5 +64,12 @@
           ))))
   )
 
+(defn what-to-move-from-right-to-left [configuration]
+  (let [[left-bank boat right-bank] configuration
+        off-right-bank (partial off-you-and-item right-bank)
+        on-left-bank (partial on-you-and-item left-bank)]
+    (if (danger? (off-right-bank :you))
+      (first (disj right-bank :you)))))
+
 (defn river-crossing-plan []
   (remove danger? all-combinations))
