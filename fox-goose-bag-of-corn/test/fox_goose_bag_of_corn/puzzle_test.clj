@@ -70,4 +70,7 @@
         (move-right [#{:you :fox :goose :corn} #{:boat} #{}] :fox)))
   (is (= [[#{:fox} #{:boat :you :corn } #{:goose}]
           [#{:fox} #{:boat} #{:you :corn :goose}]]
-         (move-right [#{:you :fox  :corn} #{:boat} #{:goose}] :corn))))
+         (move-right [#{:you :fox  :corn} #{:boat} #{:goose}] :corn)))
+  (is (= [[#{:corn} #{:boat :you :fox } #{:goose}]
+          [#{:corn :you :fox} #{:boat } #{:goose}]]
+         (move-left [#{:corn} #{:boat} #{:you :fox :goose}] :fox))))
