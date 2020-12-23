@@ -58,8 +58,8 @@
   (is (= :fox (what-to-move-from-left-to-right [#{:you :goose :fox} #{:boat} #{:corn}])))
   (is (contains? #{:goose :corn :fox} (what-to-move-from-left-to-right [#{:you :corn :fox} #{:boat} #{:goose}])))
 
-  (is (= nil (what-to-move-from-right-to-left [#{:you :fox :goose :corn} #{:boat} #{}])))
-  (is (= nil (what-to-move-from-right-to-left [#{  :goose } #{:boat} #{:you :corn :fox}])))
+  (is (= :nothing (what-to-move-from-right-to-left [#{:you :fox :goose :corn} #{:boat} #{}])))
+  (is (= :nothing (what-to-move-from-right-to-left [#{  :goose } #{:boat} #{:you :corn :fox}])))
   (is (contains? #{:corn :goose} (what-to-move-from-right-to-left [#{:fox} #{:boat} #{:you :corn :goose}])))
   (is (contains? #{:fox :goose} (what-to-move-from-right-to-left [#{:corn} #{:boat} #{:you :fox :goose}])))
   )

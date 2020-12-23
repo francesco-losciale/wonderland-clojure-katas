@@ -1,24 +1,8 @@
 (ns fox-goose-bag-of-corn.puzzle
   (:require [clojure.set :refer :all]))
 
-(def start-pos [[[:fox :goose :corn :you] [:boat] []]])
-
-(def all-combinations
-  '(start-pos
-     (move-right start-pos (what-to-move-from-left-to-right start-pos))
-     (move-left (move-right start-pos (what-to-move-from-left-to-right start-pos)) (what-to-move-from-right-to-left (move-right start-pos (what-to-move-from-left-to-right start-pos))))
-    ;[#{:fox :corn} #{:you :boat} #{:goose}]
-    ;[#{:you :fox :corn} #{:boat} #{:goose}]
-    [#{:fox} #{:you :boat :corn} #{:goose}]
-    [#{:fox} #{:boat} #{:you :goose :corn}]
-    [#{:fox} #{:you :boat :goose} #{:corn}]
-    [#{:you :fox :goose} #{:boat} #{:corn}]
-    [#{:goose} #{:you :fox :boat} #{:corn}]
-    [#{:goose} #{:boat} #{:you :fox :corn}]
-    [#{:goose} #{:you :boat} #{:fox :corn}]
-    [#{:you :goose} #{:boat} #{:fox :corn}]
-    [#{} #{:you :boat :goose} #{:fox :corn}]
-    [#{} #{:boat} #{:you :fox :goose :corn}]))
+(def start-pos [#{:fox :goose :corn :you} #{:boat} #{}])
+(def end-pos [#{} #{:boat} #{:you :fox :goose :corn}])
 
 (defn danger? [items]
   (and (not (some #(= % :you) items))
@@ -89,5 +73,30 @@
       [(conj left-bank item :you) boat (disj right-bank item :you)]])
     ))
 
+
+(def all-combinations
+  '(start-pos
+     (move-right start-pos (what-to-move-from-left-to-right start-pos))
+     (move-left (move-right start-pos (what-to-move-from-left-to-right start-pos)) (what-to-move-from-right-to-left (move-right start-pos (what-to-move-from-left-to-right start-pos))))
+     ;[#{:fox :corn} #{:you :boat} #{:goose}]
+     ;[#{:you :fox :corn} #{:boat} #{:goose}]
+     [#{:fox} #{:you :boat :corn} #{:goose}]
+     [#{:fox} #{:boat} #{:you :goose :corn}]
+     [#{:fox} #{:you :boat :goose} #{:corn}]
+     [#{:you :fox :goose} #{:boat} #{:corn}]
+     [#{:goose} #{:you :fox :boat} #{:corn}]
+     [#{:goose} #{:boat} #{:you :fox :corn}]
+     [#{:goose} #{:you :boat} #{:fox :corn}]
+     [#{:you :goose} #{:boat} #{:fox :corn}]
+     [#{} #{:you :boat :goose} #{:fox :corn}]
+     [#{} #{:boat} #{:you :fox :goose :corn}]))
+
 (defn river-crossing-plan []
-  all-combinations)
+  (loop [configuration start-pos
+         result []]
+    (if (not= (last result) end-pos)
+      (let [new-configuration (move-right configuration (what-to-move-from-left-to-right configuration))
+            new-new-configuration (move-left (last new-configuration) (what-to-move-from-right-to-left (last new-configuration)))]
+        (recur (last new-configuration) (concat start-pos new-configuration new-new-configuration)))
+      result)
+    ))
