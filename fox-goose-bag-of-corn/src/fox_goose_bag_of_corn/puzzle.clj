@@ -6,10 +6,9 @@
 (def all-combinations
   '(start-pos
      (move-right start-pos (what-to-move-from-left-to-right start-pos))
-     ;[#{:fox :corn} #{:you :boat :goose} #{}]
-    ;[#{:fox :corn} #{:boat} #{:you :goose}]
-    [#{:fox :corn} #{:you :boat} #{:goose}]
-    [#{:you :fox :corn} #{:boat} #{:goose}]
+     (move-left (move-right start-pos (what-to-move-from-left-to-right start-pos)) (what-to-move-from-right-to-left (move-right start-pos (what-to-move-from-left-to-right start-pos))))
+    ;[#{:fox :corn} #{:you :boat} #{:goose}]
+    ;[#{:you :fox :corn} #{:boat} #{:goose}]
     [#{:fox} #{:you :boat :corn} #{:goose}]
     [#{:fox} #{:boat} #{:you :goose :corn}]
     [#{:fox} #{:you :boat :goose} #{:corn}]
@@ -70,7 +69,8 @@
         off-right-bank (partial off-you-and-item right-bank)
         on-left-bank (partial on-you-and-item left-bank)]
     (if (danger? (off-right-bank :you))
-      (first (disj right-bank :you)))))
+      (first (disj right-bank :you))
+      :nothing)))
 
 (defn move-right [configuration item]
   (let [[left-bank boat right-bank] configuration]
