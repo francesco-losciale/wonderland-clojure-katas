@@ -4,7 +4,7 @@
 (def start-pos [[[:fox :goose :corn :you] [:boat] []]])
 
 (def all-combinations
-  '([#{:you :fox :goose :corn} #{:boat} #{}]
+  '(start-pos
     [#{:fox :corn} #{:you :boat :goose} #{}]
     [#{:fox :corn} #{:boat} #{:you :goose}]
     [#{:fox :corn} #{:you :boat} #{:goose}]
@@ -88,4 +88,4 @@
     ))
 
 (defn river-crossing-plan []
-  (remove danger? all-combinations))
+  all-combinations)
