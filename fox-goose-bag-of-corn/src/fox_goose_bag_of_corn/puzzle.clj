@@ -97,6 +97,6 @@
     (if (not= (last result) end-pos)
       (let [new-configuration (move-right configuration (what-to-move-from-left-to-right configuration))
             new-new-configuration (move-left (last new-configuration) (what-to-move-from-right-to-left (last new-configuration)))]
-        (recur (last new-configuration) (concat start-pos new-configuration new-new-configuration)))
+        (recur (last new-new-configuration) (concat configuration new-configuration new-new-configuration)))
       result)
     ))
