@@ -43,3 +43,11 @@
         (reduce validate-move middle-moves)
         (reduce validate-move right-moves )))))
 
+(deftest test-danger?
+  (let [goose-with-fox-danger #{:goose :fox}
+        goose-with-corn-danger #{:goose :corn}]
+    (is (danger? goose-with-corn-danger))
+    (is (danger? goose-with-fox-danger))
+    (is (not (danger? (conj goose-with-corn-danger :you))))
+    (is (not (danger? (conj goose-with-fox-danger :you))))
+    ))

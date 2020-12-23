@@ -19,10 +19,7 @@
    [#{} #{:you :boat :goose} #{:fox :corn}]
    [#{} #{:boat} #{:you :fox :goose :corn}]))
 
-;(defn remaining-items [[item you] all-items]
-;  (remove #(or (= % item) (= % you)) all-items))
-
-(defn fox-or-goose-danger? [items]
+(defn danger? [items]
   (and (not (some #(= % :you) items))
        (or (and
              (some #(= % :goose) items)
@@ -31,16 +28,8 @@
              (some #(= % :fox) items)
              (some #(= % :goose) items))
            )))
-(defn danger? [[left-bank _ right-bank]]
-  (or
-    (fox-or-goose-danger? left-bank)
-    (fox-or-goose-danger? right-bank)))
+
+
 
 (defn river-crossing-plan []
   (remove danger? all-combinations))
-
-; given left list
-; remove you and one more thing without leaving ...
-; copy on right list
-; add you to left list
-; repeat until left list empty
