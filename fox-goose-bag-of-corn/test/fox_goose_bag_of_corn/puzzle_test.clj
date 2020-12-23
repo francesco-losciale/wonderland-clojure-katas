@@ -27,21 +27,21 @@
             right-bank (map last crossing-plan)]
         (testing "the fox and the goose should never be left alone together"
           (is (empty?
-               (filter #(= % #{:fox :goose}) (concat left-bank right-bank)))))
+                (filter #(= % #{:fox :goose}) (concat left-bank right-bank)))))
         (testing "the goose and the corn should never be left alone together"
           (is (empty?
-               (filter #(= % #{:goose :corn}) (concat left-bank right-bank)))))))
+                (filter #(= % #{:goose :corn}) (concat left-bank right-bank)))))))
     (testing "The boat can carry only you plus one other"
       (let [boat-positions (map second crossing-plan)]
         (is (empty?
-             (filter #(> (count %) 3) boat-positions)))))
+              (filter #(> (count %) 3) boat-positions)))))
     (testing "moves are valid"
       (let [left-moves (map first crossing-plan)
             middle-moves (map second crossing-plan)
             right-moves (map last crossing-plan)]
         (reduce validate-move left-moves)
         (reduce validate-move middle-moves)
-        (reduce validate-move right-moves )))))
+        (reduce validate-move right-moves)))))
 
 (deftest test-danger?
   (let [goose-with-fox-danger #{:goose :fox}
@@ -51,3 +51,11 @@
     (is (not (danger? (conj goose-with-corn-danger :you))))
     (is (not (danger? (conj goose-with-fox-danger :you))))
     ))
+
+(deftest test-find-what-to-move
+  (is (= :goose (what-to-move-from-left-to-right [#{:you :fox :goose :corn} #{:boat} #{}])))
+  (is (= :corn (what-to-move-from-left-to-right [#{:you :goose :corn} #{:boat} #{:fox}])))
+  (is (= :fox (what-to-move-from-left-to-right [#{:you :goose :fox} #{:boat} #{:corn}])))
+  (is (contains? #{:goose :corn :fox} (what-to-move-from-left-to-right [#{:you :corn :fox} #{:boat} #{:goose}])))
+
+  )
