@@ -2,31 +2,42 @@
 
 (def start-pos [[[:fox :goose :corn :you] [:boat] []]])
 
-; [:fox :goose :corn :you] [:boat] []
-; [:fox :goose ] [:boat] [:corn :you]
-; [:fox :goose :you] [:boat] [:corn ]
-; [:goose ] [:boat] [:corn :you :fox]
-; [:goose :you] [:boat] [:corn :fox]
-; [] [:boat] [:goose :you :corn :fox]
+(def all-combinations
+  '([#{:you :fox :goose :corn} #{:boat} #{}]
+   [#{:fox :corn} #{:you :boat :goose} #{}]
+   [#{:fox :corn} #{:boat} #{:you :goose}]
+   [#{:fox :corn} #{:you :boat} #{:goose}]
+   [#{:you :fox :corn} #{:boat} #{:goose}]
+   [#{:fox} #{:you :boat :corn} #{:goose}]
+   [#{:fox} #{:boat} #{:you :goose :corn}]
+   [#{:fox} #{:you :boat :goose} #{:corn}]
+   [#{:you :fox :goose} #{:boat} #{:corn}]
+   [#{:goose} #{:you :fox :boat} #{:corn}]
+   [#{:goose} #{:boat} #{:you :fox :corn}]
+   [#{:goose} #{:you :boat} #{:fox :corn}]
+   [#{:you :goose} #{:boat} #{:fox :corn}]
+   [#{} #{:you :boat :goose} #{:fox :corn}]
+   [#{} #{:boat} #{:you :fox :goose :corn}]))
 
-(defn remaining-items [[item you] all-items]
-  (remove #(or (= % item) (= % you)) all-items))
+;(defn remaining-items [[item you] all-items]
+;  (remove #(or (= % item) (= % you)) all-items))
 
-(defn danger? [items]
-  (or (= (set items) #{:goose :corn})
-      (= (set items) #{:fox :goose})))
+(defn fox-or-goose-danger? [items]
+  (and (not (some #(= % :you) items))
+       (or (and
+             (some #(= % :goose) items)
+             (some #(= % :corn) items))
+           (and
+             (some #(= % :fox) items)
+             (some #(= % :goose) items))
+           )))
+(defn danger? [[left-bank _ right-bank]]
+  (or
+    (fox-or-goose-danger? left-bank)
+    (fox-or-goose-danger? right-bank)))
 
 (defn river-crossing-plan []
-  (let [[[left _ right]] start-pos
-        items (filter #(not= % :you) left)
-        options (for [item items]
-                  (list item :you))]
-    (remove
-      #(danger?
-         (remaining-items % left))
-      options
-      )
-    ))
+  (remove danger? all-combinations))
 
 ; given left list
 ; remove you and one more thing without leaving ...
