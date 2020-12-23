@@ -71,5 +71,13 @@
     (if (danger? (off-right-bank :you))
       (first (disj right-bank :you)))))
 
+(defn move-right [configuration item]
+  (let [[left-bank boat right-bank] configuration]
+    [
+     [(disj left-bank item :you) (conj boat item :you) right-bank]
+     [(disj left-bank item :you) boat (conj right-bank item :you)]
+     ]
+    ))
+
 (defn river-crossing-plan []
   (remove danger? all-combinations))

@@ -62,6 +62,12 @@
   (is (= nil (what-to-move-from-right-to-left [#{  :goose } #{:boat} #{:you :corn :fox}])))
   (is (contains? #{:corn :goose} (what-to-move-from-right-to-left [#{:fox} #{:boat} #{:you :corn :goose}])))
   (is (contains? #{:fox :goose} (what-to-move-from-right-to-left [#{:corn} #{:boat} #{:you :fox :goose}])))
-
-
   )
+
+(deftest test-move-something
+  (is (= [[#{:goose :corn} #{:boat :you :fox } #{}]
+          [#{:goose :corn} #{:boat} #{:you :fox }]]
+        (move-right [#{:you :fox :goose :corn} #{:boat} #{}] :fox)))
+  (is (= [[#{:fox} #{:boat :you :corn } #{:goose}]
+          [#{:fox} #{:boat} #{:you :corn :goose}]]
+         (move-right [#{:you :fox  :corn} #{:boat} #{:goose}] :corn))))
