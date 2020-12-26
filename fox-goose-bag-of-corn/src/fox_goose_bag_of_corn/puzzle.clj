@@ -3,64 +3,69 @@
 
 (def start-pos [#{:fox :goose :corn :you} #{:boat} #{}])
 (def end-pos [#{} #{:boat} #{:you :fox :goose :corn}])
-
-(defn danger? [items]
-  (and (not (some #(= % :you) items))
-       (or (and
-             (some #(= % :goose) items)
-             (some #(= % :corn) items))
-           (and
-             (some #(= % :fox) items)
-             (some #(= % :goose) items))
-           )))
-
-(defn off-you-and-item [list item]
-  (disj list item :you))
-
-(defn on-you-and-item [list item]
-  (conj list item :you))
-
-(defn off-you [list]
-  (disj list :you))
-
-(defn what-to-move-from-left-to-right [configuration]
-  (let [[left-bank boat right-bank] configuration
-        off-left-bank (partial off-you-and-item left-bank)
-        on-right-bank (partial on-you-and-item right-bank)]
-    (if (and
-          (contains? left-bank :fox)
-          (not (contains? right-bank :goose))
-          (not (danger? (off-left-bank :fox)))
-          (not (danger? (off-you (on-right-bank :fox))))
-          )
-      :fox
-      (if (and
-            (contains? left-bank :goose)
-            (or
-              (not (danger? (off-left-bank :goose)))
-              (= (on-right-bank :goose) end-pos))
-            (not (danger? (off-you (on-right-bank :goose))))
-            )
-        :goose
-        (if (and
-              (contains? left-bank :corn)
-              (not (danger? (off-left-bank :corn)))
-              (not (danger? (off-you (on-right-bank :corn)))))
-          :corn
-          ;(first (disj left-bank :you))                             ; pick one randome and bring it back
-          :corn
-          ))))
-  )
-
-(defn what-to-move-from-right-to-left [configuration]
-  (let [[left-bank boat right-bank] configuration
-        off-right-bank (partial off-you-and-item right-bank)
-        on-left-bank (partial on-you-and-item left-bank)]
-    (if (danger? (off-right-bank :you))
-      (first (disj right-bank :you))
-      :nothing)))
-
+;
+;(defn danger? [items]
+;  (and (not (some #(= % :you) items))
+;       (or (and
+;             (some #(= % :goose) items)
+;             (some #(= % :corn) items))
+;           (and
+;             (some #(= % :fox) items)
+;             (some #(= % :goose) items))
+;           )))
+;;
+;;(defn off-you-and-item [list item]
+;;  (disj list item :you))
+;;
+;;(defn on-you-and-item [list item]
+;;  (conj list item :you))
+;;
+;;(defn off-you [list]
+;;  (disj list :you))
+;;(defn what-to-move-from-left-to-right [configuration]
+;;  (let [[left-bank boat right-bank] configuration
+;;        off-left-bank (partial off-you-and-item left-bank)
+;;        on-right-bank (partial on-you-and-item right-bank)]
+;;    (if (and
+;;          (contains? left-bank :fox)
+;;          (not (danger? (off-left-bank :fox)))
+;;          (not (danger? (off-you (on-right-bank :fox))))
+;;          )
+;;      :fox
+;;      (if (and
+;;            (contains? left-bank :goose)
+;;            (not (danger? (off-left-bank :goose)))
+;;            (not (danger? (off-you (on-right-bank :goose))))
+;;            )
+;;        :goose
+;;        (if (and
+;;              (contains? left-bank :corn)
+;;              (not (danger? (off-left-bank :corn)))
+;;              (not (danger? (off-you (on-right-bank :corn)))))
+;;          :corn
+;;          (first (disj left-bank :you))                     ; pick one randome and bring it back
+;;          ))))
+;;  )
+;;
+;;(defn what-to-move-from-right-to-left [configuration]
+;;  (let [[left-bank boat right-bank] configuration
+;;        off-right-bank (partial off-you-and-item right-bank)
+;;        on-left-bank (partial on-you-and-item left-bank)]
+;;    (if (or
+;;          (and (contains? right-bank :corn) (contains? right-bank :goose))
+;;          (and (contains? right-bank :fox) (contains? right-bank :goose)))
+;;      :goose
+;;      (if (and (contains? right-bank :fox) (contains? right-bank :goose))
+;;        :fox
+;;        (if (danger? (off-right-bank :you))
+;;          (first (disj right-bank :you))
+;;          :nothing))
+;;      ))
+;;  )
+;;
 (defn move-right [configuration item]
+  (comment
+    (def configuration [#{:fox} #{:you :boat :corn} #{:goose}]))
   (let [[left-bank boat right-bank] configuration]
     [
      [(disj left-bank item :you) (conj boat item :you) right-bank]
@@ -71,36 +76,75 @@
 (defn move-left [configuration item]
   (let [[left-bank boat right-bank] configuration]
     (if (= item :nothing)
-     [[left-bank (conj boat :you) (disj right-bank :you)]
-      [(conj left-bank :you) boat (disj right-bank :you)]]
-     [[left-bank (conj boat item :you) (disj right-bank item :you)]
-      [(conj left-bank item :you) boat (disj right-bank item :you)]])
+      [[left-bank (conj boat :you) (disj right-bank :you)]
+       [(conj left-bank :you) boat (disj right-bank :you)]]
+      [[left-bank (conj boat item :you) (disj right-bank item :you)]
+       [(conj left-bank item :you) boat (disj right-bank item :you)]])
     ))
+;
+;
+;(def all-combinations
+;  '(start-pos
+;     (move-right start-pos (what-to-move-from-left-to-right start-pos))
+;     (move-left (move-right start-pos (what-to-move-from-left-to-right start-pos)) (what-to-move-from-right-to-left (move-right start-pos (what-to-move-from-left-to-right start-pos))))
+;     ;[#{:fox :corn} #{:you :boat} #{:goose}]
+;     ;[#{:you :fox :corn} #{:boat} #{:goose}]
+;     [#{:fox} #{:you :boat :corn} #{:goose}]
+;     [#{:fox} #{:boat} #{:you :goose :corn}]
+;     [#{:fox} #{:you :boat :goose} #{:corn}]
+;     [#{:you :fox :goose} #{:boat} #{:corn}]
+;     [#{:goose} #{:you :fox :boat} #{:corn}]
+;     [#{:goose} #{:boat} #{:you :fox :corn}]
+;     [#{:goose} #{:you :boat} #{:fox :corn}]
+;     [#{:you :goose} #{:boat} #{:fox :corn}]
+;     [#{} #{:you :boat :goose} #{:fox :corn}]
+;     [#{} #{:boat} #{:you :fox :goose :corn}]))
 
+(defn right-bank [[_ _ right-bank]]
+  right-bank)
 
-(def all-combinations
-  '(start-pos
-     (move-right start-pos (what-to-move-from-left-to-right start-pos))
-     (move-left (move-right start-pos (what-to-move-from-left-to-right start-pos)) (what-to-move-from-right-to-left (move-right start-pos (what-to-move-from-left-to-right start-pos))))
-     ;[#{:fox :corn} #{:you :boat} #{:goose}]
-     ;[#{:you :fox :corn} #{:boat} #{:goose}]
-     [#{:fox} #{:you :boat :corn} #{:goose}]
-     [#{:fox} #{:boat} #{:you :goose :corn}]
-     [#{:fox} #{:you :boat :goose} #{:corn}]
-     [#{:you :fox :goose} #{:boat} #{:corn}]
-     [#{:goose} #{:you :fox :boat} #{:corn}]
-     [#{:goose} #{:boat} #{:you :fox :corn}]
-     [#{:goose} #{:you :boat} #{:fox :corn}]
-     [#{:you :goose} #{:boat} #{:fox :corn}]
-     [#{} #{:you :boat :goose} #{:fox :corn}]
-     [#{} #{:boat} #{:you :fox :goose :corn}]))
+(defn left-bank [[left-bank _ _]]
+  left-bank)
+
+(defn invalid? [[left-bank _ right-bank]]
+  (letfn [(danger? [items]
+            (and (not (some #(= % :you) items))
+                 (or (and
+                       (some #(= % :goose) items)
+                       (some #(= % :corn) items))
+                     (and
+                       (some #(= % :fox) items)
+                       (some #(= % :goose) items))
+                     )))]
+    (true? (or (danger? left-bank) (danger? right-bank))))
+  )
+
+(defn visited? [configuration path]
+  (contains? path configuration))
+
+(defn final? [configuration]
+  (= configuration end-pos))
+
+(defn calc-path [configuration path]
+  (comment
+    (def configuration [#{:fox :you :corn :goose} #{:boat} #{}])
+    (def path [])
+    (def i :fox))
+  (if (invalid? configuration)
+    (for [i (right-bank configuration)]
+      (calc-path (last (move-left configuration i)) path))
+    (if (visited? configuration path)
+      []
+      (if (final? configuration)
+        path
+        (for [i (left-bank configuration)]
+          (concat
+            (calc-path
+              (last (move-right configuration i))
+              path)))))
+    )
+  )
+
 
 (defn river-crossing-plan []
-  (loop [configuration start-pos
-         result []]
-    (if (not (some #(= % end-pos) result))                    ; (not= (last result) end-pos)
-      (let [new-configuration (move-right configuration (what-to-move-from-left-to-right configuration))
-            new-new-configuration (move-left (last new-configuration) (what-to-move-from-right-to-left (last new-configuration)))]
-        (recur (last new-new-configuration) (concat new-configuration new-new-configuration)))
-      result)
-    ))
+  (calc-path start-pos []))
