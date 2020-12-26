@@ -29,13 +29,16 @@
         on-right-bank (partial on-you-and-item right-bank)]
     (if (and
           (contains? left-bank :fox)
+          (not (contains? right-bank :goose))
           (not (danger? (off-left-bank :fox)))
           (not (danger? (off-you (on-right-bank :fox))))
           )
       :fox
       (if (and
             (contains? left-bank :goose)
-            (not (danger? (off-left-bank :goose)))
+            (or
+              (not (danger? (off-left-bank :goose)))
+              (= (on-right-bank :goose) end-pos))
             (not (danger? (off-you (on-right-bank :goose))))
             )
         :goose
@@ -44,7 +47,8 @@
               (not (danger? (off-left-bank :corn)))
               (not (danger? (off-you (on-right-bank :corn)))))
           :corn
-          (first (disj left-bank :you))                             ; pick one randome and bring it back
+          ;(first (disj left-bank :you))                             ; pick one randome and bring it back
+          :corn
           ))))
   )
 
@@ -94,9 +98,9 @@
 (defn river-crossing-plan []
   (loop [configuration start-pos
          result []]
-    (if (not= (last result) end-pos)
+    (if (not (some #(= % end-pos) result))                    ; (not= (last result) end-pos)
       (let [new-configuration (move-right configuration (what-to-move-from-left-to-right configuration))
             new-new-configuration (move-left (last new-configuration) (what-to-move-from-right-to-left (last new-configuration)))]
-        (recur (last new-new-configuration) (concat configuration new-configuration new-new-configuration)))
+        (recur (last new-new-configuration) (concat new-configuration new-new-configuration)))
       result)
     ))

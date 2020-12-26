@@ -54,8 +54,10 @@
 
 (deftest test-find-what-to-move
   (is (= :goose (what-to-move-from-left-to-right [#{:you :fox :goose :corn} #{:boat} #{}])))
+  (is (= :corn (what-to-move-from-left-to-right [#{:you :goose} #{:boat} #{:corn :fox}])))
   (is (= :corn (what-to-move-from-left-to-right [#{:you :goose :corn} #{:boat} #{:fox}])))
   (is (= :fox (what-to-move-from-left-to-right [#{:you :goose :fox} #{:boat} #{:corn}])))
+  (is (= :corn (what-to-move-from-left-to-right [#{:you :corn :fox} #{:boat} #{:goose}])))
   (is (contains? #{:goose :corn :fox} (what-to-move-from-left-to-right [#{:you :corn :fox} #{:boat} #{:goose}])))
 
   (is (= :nothing (what-to-move-from-right-to-left [#{:you :fox :goose :corn} #{:boat} #{}])))
