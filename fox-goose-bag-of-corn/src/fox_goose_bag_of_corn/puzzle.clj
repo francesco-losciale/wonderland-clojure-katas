@@ -100,11 +100,11 @@
 ;     [#{} #{:you :boat :goose} #{:fox :corn}]
 ;     [#{} #{:boat} #{:you :fox :goose :corn}]))
 
-(defn right-bank [[_ _ right-bank]]
-  right-bank)
+(defn right-bank-items [[_ _ right-bank]]
+  (disj right-bank :you))
 
-(defn left-bank [[left-bank _ _]]
-  left-bank)
+(defn left-bank-items [[left-bank _ _]]
+  (disj left-bank :you))
 
 (defn invalid? [[left-bank _ right-bank]]
   (letfn [(danger? [items]
@@ -120,28 +120,29 @@
   )
 
 (defn visited? [configuration path]
-  (contains? path configuration))
+  (true? (some #(= % configuration) path)))
 
 (defn final? [configuration]
   (= configuration end-pos))
 
 (defn calc-path [configuration path]
   (comment
-    (def configuration [#{:fox :you :corn :goose} #{:boat} #{}])
-    (def path [])
-    (def i :fox))
+    (def configuration [#{:you :fox :goose :corn} #{:boat} #{}]))
+  (println configuration)
   (if (invalid? configuration)
-    (for [i (right-bank configuration)]
-      (calc-path (last (move-left configuration i)) path))
+    (for [i (right-bank-items configuration)]
+      (calc-path
+        (last (move-left configuration i))
+        (concat path (move-left configuration i))))
     (if (visited? configuration path)
       []
       (if (final? configuration)
         path
-        (for [i (left-bank configuration)]
+        (for [i (left-bank-items configuration)]
           (concat
             (calc-path
               (last (move-right configuration i))
-              path)))))
+              (concat path (move-right configuration i)))))))
     )
   )
 
