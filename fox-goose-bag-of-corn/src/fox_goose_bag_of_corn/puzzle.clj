@@ -70,6 +70,8 @@
     [
      [(disj left-bank item :you) (conj boat item :you) right-bank]
      [(disj left-bank item :you) boat (conj right-bank item :you)]
+     ;[(disj left-bank item :you) (conj boat :you) (conj right-bank item)]
+     ;[(disj left-bank item) boat (conj right-bank item)]
      ]
     ))
 
@@ -108,43 +110,118 @@
 
 (defn invalid? [[left-bank _ right-bank]]
   (letfn [(danger? [items]
-            (and (not (some #(= % :you) items))
-                 (or (and
-                       (some #(= % :goose) items)
-                       (some #(= % :corn) items))
-                     (and
-                       (some #(= % :fox) items)
-                       (some #(= % :goose) items))
-                     )))]
+            (and
+              ;(not (some #(= % :you) items))
+              (or (and
+                    (some #(= % :goose) items)
+                    (some #(= % :corn) items))
+                  (and
+                    (some #(= % :fox) items)
+                    (some #(= % :goose) items))
+                  )))]
     (true? (or (danger? left-bank) (danger? right-bank))))
   )
 
 (defn visited? [configuration path]
-  (true? (some #(= % configuration) path)))
+  (true? (= (count (filter #(= % configuration) path)) 2)))
 
 (defn final? [configuration]
   (= configuration end-pos))
 
 (defn calc-path [configuration path]
   (comment
-    (def configuration [#{:you :fox :goose :corn} #{:boat} #{}]))
+    (def configuration [#{:you :fox :corn} #{:boat} #{:goose}])
+    (def i :fox)
+    (def path [[#{:fox :corn} #{:you :boat :goose} #{}] [#{:fox :corn} #{:boat} #{:you :goose}] [#{:fox :corn} #{:you :boat} #{:goose}] [#{:you :fox :corn} #{:boat} #{:goose}]]))
   (println configuration)
-  (if (invalid? configuration)
+  (cond
+    (invalid? configuration)
     (for [i (right-bank-items configuration)]
       (calc-path
         (last (move-left configuration i))
         (concat path (move-left configuration i))))
-    (if (visited? configuration path)
-      []
-      (if (final? configuration)
-        path
-        (for [i (left-bank-items configuration)]
-          (concat
-            (calc-path
-              (last (move-right configuration i))
-              (concat path (move-right configuration i)))))))
+    (visited? configuration path)
+    []
+    (true? (some final? path))
+    path
+    :else
+    (for [i (left-bank-items configuration)]
+      (concat
+        (calc-path
+          (last (move-right configuration i))
+          (concat path (move-right configuration i)))))
     )
   )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def start-pos [#{:goose :fox :corn} #{}])
+(def end-pos [#{} #{:goose :fox :corn}])
+
+(defn final? [configuration]
+  (= configuration end-pos))
+
+(defn move-left [configuration item]
+  (let [[left-bank right-bank] configuration]
+    [(conj left-bank item) (disj right-bank item)]))
+
+(defn move-right [configuration item]
+  (let [[left-bank right-bank] configuration]
+    [(disj left-bank item) (conj right-bank item)]))
+
+(defn invalid? [[left-bank right-bank]]
+  (letfn [(danger? [items]
+            (and
+              (not= [left-bank right-bank] start-pos)
+              (not= [left-bank right-bank] end-pos)
+              (or (and
+                    (some #(= % :goose) items)
+                    (some #(= % :corn) items))
+                  (and
+                    (some #(= % :fox) items)
+                    (some #(= % :goose) items))
+                  )))]
+    (true? (or (danger? left-bank) (danger? right-bank))))
+  )
+
+(defn left-bank [[left-bank _]]
+  left-bank)
+
+(defn right-bank [[_ right-bank]]
+  right-bank)
+
+(defn calc-path [configuration path]
+  (comment
+    (def configuration [#{:fox :corn} #{:goose}])
+    (def i :goose)
+    (def path []))
+  (cond
+    (invalid? configuration)
+    (do
+      (for [i (right-bank configuration)]
+        (do
+          (println "invalid " configuration " and next is" (move-left configuration i))
+          (calc-path
+           (move-left configuration i)
+           (conj path (move-left configuration i))))))
+    (visited? configuration path)
+    (do
+      (println "visited already " configuration)
+      [])
+    (true? (some final? path))
+    (do
+      (println "final path " path)
+      path)
+    :else
+    (do
+      (for [i (left-bank configuration)]
+        (do
+          (println "next of " configuration " is " (move-right configuration i))
+          (calc-path
+           (move-right configuration i)
+           (conj path (move-right configuration i))))))
+    ))
+
 
 
 (defn river-crossing-plan []
