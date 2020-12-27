@@ -228,9 +228,10 @@
           (for [i (left-bank configuration)]
             (do
               (println "next of " configuration " is " (move-right configuration i))
-              (calc-path
-                (move-right configuration i)
-                (conj path (move-right configuration i))))))
+              (if (not (invalid? (move-right configuration i)))
+               (calc-path
+                 (move-right configuration i)
+                 (conj path (move-right configuration i)))))))
         )
       ))
   )
