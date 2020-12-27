@@ -123,7 +123,7 @@
   )
 
 (defn visited? [configuration path]
-  (true? (> (count (filter #(= % configuration) path)) 2)))
+  (true? (> (count (filter #(= % configuration) path)) 1)))
 
 (defn final? [configuration]
   (= configuration end-pos))
@@ -160,6 +160,9 @@
 
 (defn final? [configuration]
   (= configuration end-pos))
+
+(defn visited? [configuration path]
+  (true? (> (count (filter #(= % configuration) path)) 1)))
 
 (defn move-left [configuration item]
   (let [[left-bank right-bank] configuration]
@@ -198,28 +201,29 @@
   (comment
     (def configuration start-pos)
     (def left-bank (first configuration)))
+  (println path)
   (let [[lb _] configuration]
     (if (empty? lb)
       path
       (cond
         (visited? configuration path)
         (do
-          (println "already visited " configuration)
+          ;(println "already visited " configuration)
           [])
         (and (you-on-right-bank? configuration)
              (not (invalid? (move-left configuration :you))))
           (do
-            (println "next of " configuration " is " (move-left configuration :you))
+            ;(println "next of " configuration " is " (move-left configuration :you))
             (calc-path
               (move-left configuration :you)
               (conj path (move-left configuration :you))))
         (and (you-on-right-bank? configuration)
              (invalid? (move-left configuration :you)))
           (do
-            (println "stuck at " configuration)
+            ;(println "stuck at " configuration)
             (for [i (right-bank configuration)]
               (do
-                (println "next of " configuration " is " (move-left configuration i))
+                ;(println "next of " configuration " is " (move-left configuration i))
                 (calc-path
                   (move-left configuration i)
                   (conj path (move-left configuration i))))))
@@ -227,7 +231,7 @@
         (do
           (for [i (left-bank configuration)]
             (do
-              (println "next of " configuration " is " (move-right configuration i))
+              ;(println "next of " configuration " is " (move-right configuration i))
               (if (not (invalid? (move-right configuration i)))
                (calc-path
                  (move-right configuration i)
