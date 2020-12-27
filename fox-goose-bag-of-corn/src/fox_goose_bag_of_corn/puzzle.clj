@@ -162,6 +162,7 @@
   (= configuration end-pos))
 
 (defn visited? [configuration path]
+  (println "config " configuration " and path " path)
   (true? (> (count (filter #(= % configuration) path)) 1)))
 
 (defn move-left [configuration item]
@@ -201,7 +202,7 @@
   (comment
     (def configuration start-pos)
     (def left-bank (first configuration)))
-  (println path)
+  ;(println path)
   (let [[lb _] configuration]
     (if (empty? lb)
       path
