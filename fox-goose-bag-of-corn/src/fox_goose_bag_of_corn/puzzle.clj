@@ -123,7 +123,7 @@
   )
 
 (defn visited? [configuration path]
-  (true? (= (count (filter #(= % configuration) path)) 2)))
+  (true? (> (count (filter #(= % configuration) path)) 2)))
 
 (defn final? [configuration]
   (= configuration end-pos))
@@ -195,33 +195,44 @@
   (contains? right-bank :you))
 
 (defn calc-path [configuration path]
-  (let [[left-bank _] configuration]
-    (if (empty? left-bank)
-      path))
-  (cond
-    (visited? configuration path)
-    (do
-      (println "already visited " configuration)
-      [])
-    (and (you-on-right-bank? configuration)
-         (not (invalid? (move-left configuration :you))))
-    (do
-      (println "next of " configuration " is " (move-left configuration i))
-      (calc-path
-        (move-left configuration :you)
-        (conj path (move-left configuration :you))))
-    (and (you-on-right-bank? configuration)
-         (invalid? (move-left configuration :you)))
-    (println "stuck at " configuration)
-    :else
-    (do
-      (for [i (left-bank configuration)]
+  (comment
+    (def configuration start-pos)
+    (def left-bank (first configuration)))
+  (let [[lb _] configuration]
+    (if (empty? lb)
+      path
+      (cond
+        (visited? configuration path)
         (do
-          (println "next of " configuration " is " (move-right configuration i))
-          (calc-path
-            (move-right configuration i)
-            (conj path (move-right configuration i))))))
-    )
+          (println "already visited " configuration)
+          [])
+        (and (you-on-right-bank? configuration)
+             (not (invalid? (move-left configuration :you))))
+          (do
+            (println "next of " configuration " is " (move-left configuration :you))
+            (calc-path
+              (move-left configuration :you)
+              (conj path (move-left configuration :you))))
+        (and (you-on-right-bank? configuration)
+             (invalid? (move-left configuration :you)))
+          (do
+            (println "stuck at " configuration)
+            (for [i (right-bank configuration)]
+              (do
+                (println "next of " configuration " is " (move-left configuration i))
+                (calc-path
+                  (move-left configuration i)
+                  (conj path (move-left configuration i))))))
+        :else
+        (do
+          (for [i (left-bank configuration)]
+            (do
+              (println "next of " configuration " is " (move-right configuration i))
+              (calc-path
+                (move-right configuration i)
+                (conj path (move-right configuration i))))))
+        )
+      ))
   )
 
 ;
