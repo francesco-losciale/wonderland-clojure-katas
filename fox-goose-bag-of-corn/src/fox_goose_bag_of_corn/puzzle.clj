@@ -155,25 +155,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def start-pos [#{:goose :fox :corn} #{}])
-(def end-pos [#{} #{:goose :fox :corn}])
+(def start-pos [#{:goose :fox :corn :you} #{}])
+(def end-pos [#{} #{:goose :fox :corn :you}])
 
 (defn final? [configuration]
   (= configuration end-pos))
 
 (defn move-left [configuration item]
   (let [[left-bank right-bank] configuration]
-    [(conj left-bank item) (disj right-bank item)]))
+    [(conj left-bank item :you) (disj right-bank item :you)]))
 
 (defn move-right [configuration item]
   (let [[left-bank right-bank] configuration]
-    [(disj left-bank item) (conj right-bank item)]))
+    [(disj left-bank item :you) (conj right-bank item :you)]))
 
 (defn invalid? [[left-bank right-bank]]
   (letfn [(danger? [items]
             (and
               (not= [left-bank right-bank] start-pos)
               (not= [left-bank right-bank] end-pos)
+              (not (contains? items :you))
               (or (and
                     (some #(= % :goose) items)
                     (some #(= % :corn) items))
@@ -185,42 +186,81 @@
   )
 
 (defn left-bank [[left-bank _]]
-  left-bank)
+  (disj left-bank :you))
 
 (defn right-bank [[_ right-bank]]
-  right-bank)
+  (disj right-bank :you))
+
+(defn you-on-right-bank? [[_ right-bank]]
+  (contains? right-bank :you))
 
 (defn calc-path [configuration path]
-  (comment
-    (def configuration [#{:fox :corn} #{:goose}])
-    (def i :goose)
-    (def path []))
+  (let [[left-bank _] configuration]
+    (if (empty? left-bank)
+      path))
   (cond
-    (invalid? configuration)
-    (do
-      (for [i (right-bank configuration)]
-        (do
-          (println "invalid " configuration " and next is" (move-left configuration i))
-          (calc-path
-           (move-left configuration i)
-           (conj path (move-left configuration i))))))
     (visited? configuration path)
     (do
-      (println "visited already " configuration)
+      (println "already visited " configuration)
       [])
-    (true? (some final? path))
+    (and (you-on-right-bank? configuration)
+         (not (invalid? (move-left configuration :you))))
     (do
-      (println "final path " path)
-      path)
+      (println "next of " configuration " is " (move-left configuration i))
+      (calc-path
+        (move-left configuration :you)
+        (conj path (move-left configuration :you))))
+    (and (you-on-right-bank? configuration)
+         (invalid? (move-left configuration :you)))
+    (println "stuck at " configuration)
     :else
     (do
       (for [i (left-bank configuration)]
         (do
           (println "next of " configuration " is " (move-right configuration i))
           (calc-path
-           (move-right configuration i)
-           (conj path (move-right configuration i))))))
-    ))
+            (move-right configuration i)
+            (conj path (move-right configuration i))))))
+    )
+  )
+
+;
+;(defn calc-path [configuration path]
+;  (comment
+;    (def configuration [#{:fox} #{:you :goose :corn}]))
+;  (let [[left-bank _] configuration]
+;    (if (empty? left-bank)
+;      path
+;      ))
+;  (cond
+;    (and (you-on-right-bank? configuration)
+;         (invalid? (move-left configuration :you)))
+;    (do
+;      (println "invalid " configuration " changed to " (move-left configuration :goose))
+;      (calc-path
+;        (move-left configuration :goose)
+;        (conj path (move-left configuration :goose))))
+;    (you-on-right-bank? configuration)
+;    (calc-path
+;      (move-left configuration :you)
+;      (conj path (move-left configuration :you)))
+;    (visited? configuration path)
+;    (do
+;      (println "visited already " configuration)
+;      [])
+;    (true? (some final? path))
+;    (do
+;      (println "final path " path)
+;      path)
+;    :else
+;    (do
+;      (for [i (left-bank configuration)]
+;        (do
+;          (println "next of " configuration " is " (move-right configuration i))
+;          (calc-path
+;            (move-right configuration i)
+;            (conj path (move-right configuration i))))))
+;    ))
 
 
 
