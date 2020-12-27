@@ -241,6 +241,8 @@
       ))
   )
 
+; TODO use :when in list comprehension https://practicalli.github.io/clojure/thinking-functionally/list-comprehension.html
+
 ;
 ;(defn calc-path [configuration path]
 ;  (comment
