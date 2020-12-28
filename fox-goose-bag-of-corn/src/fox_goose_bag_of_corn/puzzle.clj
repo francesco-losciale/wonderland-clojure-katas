@@ -213,36 +213,36 @@
           [])
         (and (you-on-right-bank? configuration)
              (not (invalid? (move-left configuration :you))))
-          (do
-            ;(println "next of " configuration " is " (move-left configuration :you))
-            (calc-path
-              (move-left configuration :you)
-              (conj path (move-left configuration :you))))
+        (do
+          ;(println "next of " configuration " is " (move-left configuration :you))
+          (calc-path
+            (move-left configuration :you)
+            (conj path (move-left configuration :you))))
         (and (you-on-right-bank? configuration)
              (invalid? (move-left configuration :you)))
-          (do
-            ;(println "stuck at " configuration)
-            (for [i (right-bank configuration)]
-              (do
-                ;(println "next of " configuration " is " (move-left configuration i))
-                (calc-path
-                  (move-left configuration i)
-                  (conj path (move-left configuration i))))))
+        (do
+          ;(println "stuck at " configuration)
+          (remove empty?
+                  (for [i (right-bank configuration) :when (not (invalid? (move-left configuration i)))]
+                    (do
+                      ;(println "next of " configuration " is " (move-left configuration i))
+                      (calc-path
+                        (move-left configuration i)
+                        (conj path (move-left configuration i)))))))
         :else
         (do
-          (for [i (left-bank configuration)]
-            (do
-              ;(println "next of " configuration " is " (move-right configuration i))
-              (if (not (invalid? (move-right configuration i)))
-               (calc-path
-                 (move-right configuration i)
-                 (conj path (move-right configuration i)))))))
+          (remove empty?
+                  (for [i (left-bank configuration) :when (not (invalid? (move-right configuration i)))]
+                    (do
+                      ;(println "next of " configuration " is " (move-right configuration i))
+                      (calc-path
+                        (move-right configuration i)
+                        (conj path (move-right configuration i)))))))
         )
       ))
   )
 
-; TODO use :when in list comprehension https://practicalli.github.io/clojure/thinking-functionally/list-comprehension.html
-
+; TODO substitute for with something else
 ;
 ;(defn calc-path [configuration path]
 ;  (comment
@@ -284,4 +284,4 @@
 
 
 (defn river-crossing-plan []
-  (calc-path start-pos []))
+  (first (first (first (first (first (calc-path start-pos [start-pos])))))))
