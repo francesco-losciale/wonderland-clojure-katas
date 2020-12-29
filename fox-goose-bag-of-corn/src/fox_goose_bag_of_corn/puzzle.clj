@@ -64,7 +64,7 @@
   (if (moved-all-items? configuration)
     path
     (cond
-      ; return an empty path to avoid infinite loops
+      ; return an empty path, avoid infinite loops
       (visited-already? configuration path)
       []
       ; when :you on the right-bank, move only if there's no harm
@@ -73,8 +73,8 @@
            (not-invalid? (right-bank-without-you configuration)))
       (let [next-move (move-left configuration :you)]
         (calc-path next-move (conj path next-move)))
-      ; when :you would leave the right bank, and it would be dangerous
-      ; for goose/corn, take something with you
+      ; :you leave the right bank, but it is dangerous
+      ; for goose/corn. Take on of them with you
       (and (you-on-right-bank? configuration)
            (invalid? (move-left configuration :you)))
       (remove empty?
@@ -82,7 +82,7 @@
                 (let [next-move (move-left configuration i)]
                   (calc-path next-move (conj path next-move)))))
       :else
-      ; create all the possible paths
+      ; create all the possible children nodes to find the path
       (remove empty?
               (for [i (left-bank configuration) :when (not-invalid? (move-right configuration i))]
                 (let [next-move (move-right configuration i)]
