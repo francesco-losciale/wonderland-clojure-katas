@@ -62,7 +62,7 @@
   "
   [configuration path]
   (if (moved-all-items? configuration)
-    path
+    (split-at 8 path)
     (cond
       ; return an empty path, avoid infinite loops
       (visited-already? configuration path)
@@ -77,16 +77,18 @@
       ; for goose/corn. Take on of them with you
       (and (you-on-right-bank? configuration)
            (invalid? (move-left configuration :you)))
-      (remove empty?
-              (for [i (right-bank configuration) :when (not-invalid? (move-left configuration i))]
-                (let [next-move (move-left configuration i)]
-                  (calc-path next-move (conj path next-move)))))
+      (->> (right-bank configuration)
+           (filter #(not-invalid? (move-left configuration %)))
+           (mapcat (fn [i]
+                  (let [next-move (move-left configuration i)]
+                    (calc-path next-move (conj path next-move))))))
       :else
       ; create all the possible children nodes to find the path
-      (remove empty?
-              (for [i (left-bank configuration) :when (not-invalid? (move-right configuration i))]
-                (let [next-move (move-right configuration i)]
-                  (calc-path next-move (conj path next-move)))))
+      (->> (left-bank configuration)
+           (filter #(not-invalid? (move-right configuration %)))
+           (mapcat (fn [i]
+                     (let [next-move (move-right configuration i)]
+                       (calc-path next-move (conj path next-move))))))
       )
     )
   )
@@ -112,5 +114,5 @@
     ))
 
 (defn river-crossing-plan []
-  (let [path (first (first (first (first (first (calc-path start-pos [start-pos]))))))]
+  (let [path (first (calc-path start-pos [start-pos]))]
     (mapcat enrich-output-path (partition 2 path))))

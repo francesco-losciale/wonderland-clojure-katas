@@ -43,7 +43,7 @@
         (reduce validate-move middle-moves)
         (reduce validate-move right-moves)))))
 
-(deftest test-finalise
+(deftest test-enrich-output-path
   (is (= (enrich-output-path [[#{:you :fox :goose :corn} #{}]
                     [#{:fox :corn} #{:you :goose}]])
          [[#{:you :fox :goose :corn} #{:boat} #{}]
