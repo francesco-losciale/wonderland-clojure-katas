@@ -2,6 +2,15 @@
   (:require [clojure.test :refer :all]
             [doublets.solver :refer :all]))
 
+(deftest helper-test
+  (testing "true when two words are linked"
+    (is (doublets? "head" "heal"))
+    (is (doublets? "heal" "head"))
+    (is (doublets? "book" "look"))
+    (is (not (doublets? "cheat" "cheep")))
+    (is (not (doublets? "book" "lock")))
+    ))
+
 (deftest solver-test
   (testing "with word links found"
     (is (= ["head" "heal" "teal" "tell" "tall" "tail"]
