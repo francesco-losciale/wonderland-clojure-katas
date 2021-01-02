@@ -7,6 +7,7 @@
     (is (doublets? "head" "heal"))
     (is (doublets? "heal" "head"))
     (is (doublets? "book" "look"))
+    (is (doublets? "look" "lock"))
     (is (not (doublets? "cheat" "cheep")))
     (is (not (doublets? "book" "lock")))
     ))
