@@ -16,11 +16,11 @@
 
 (defn doublets? [word1 word2]
   (comment
-    (def word1 "head")
-    (def word2 "heal")
-    (def word1 "boor")
+    (def word1 "door")
+    (def word2 "lock")
     (def children (disj (set (filter #(doublets? word1 %) words)) word1))
-    (def next-words (s/difference (set words) children word1))
+    (def next-words (s/difference (set words) (conj children word1)))
+    (def path [])
     )
   (and (= (count word1) (count word2))
        (and
@@ -29,16 +29,14 @@
                 (s/difference (set word2) (set word1))
                 (s/difference (set word1) (set word2)))) 2))))
 
-(defn find-path [word1 word2 words]
+(defn find-path [word1 word2 words path]
   (let [children (disj (set (filter #(doublets? word1 %) words)) word1)
         next-words (s/difference (set words) (conj children word1))]
     (do
-      (println " word1 " word1 " word2 " word2 " children " children " next words " next-words)
-      (if (not (empty? words))
-        (if (contains? children word2)
-          [word2]
-          (for [w children]
-            (concat (find-path w word2 next-words))))))))
+      (println " word1 " word1 " word2 " word2 " children " children " next words " next-words " path " path)
+      (if (= word1 word2)
+        path
+        (mapcat #(find-path % word2 next-words (conj path %)) children)))))
 
 (defn doublets [word1 word2]
-  (find-path word1 word2 words))
+  (find-path word1 word2 words []))
