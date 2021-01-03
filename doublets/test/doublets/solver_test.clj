@@ -4,12 +4,13 @@
 
 (deftest helper-test
   (testing "true when two words are linked"
-    (is (doublets? "head" "heal"))
-    (is (doublets? "heal" "head"))
-    (is (doublets? "book" "look"))
-    (is (doublets? "look" "lock"))
-    (is (not (doublets? "cheat" "cheep")))
-    (is (not (doublets? "book" "lock")))
+    (is (linked? "head" "heal"))
+    (is (linked? "heal" "head"))
+    (is (linked? "book" "look"))
+    (is (linked? "look" "lock"))
+    (is (not (linked? "teal" "tail")))
+    (is (not (linked? "cheat" "cheep")))
+    (is (not (linked? "book" "lock")))
     ))
 
 (deftest solver-test

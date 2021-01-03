@@ -8,35 +8,18 @@
                (slurp)
                (read-string)))
 
-(def words ["door"
-            "boor"
-            "book"
-            "look"
-            "lock"])
-
-(defn doublets? [word1 word2]
-  (comment
-    (def word1 "look")
-    (def word2 "lock")
-    (def children (disj (set (filter #(doublets? word1 %) words)) word1))
-    (def next-words (s/difference (set words) (conj children word1)))
-    (def path [])
-    )
+(defn linked? [word1 word2]
   (and (= (count word1) (count word2))
-       (and
-         (<= 1 (count
-              (s/union
-                (s/difference (set word2) (set word1))
-                (s/difference (set word1) (set word2)))) 2))))
+       (= (count
+            (filter true?
+                    (map #(not= %1 %2) word1 word2))) 1)))
 
 (defn find-path [word1 word2 words path]
-  (let [children (set (filter #(doublets? word1 %) words))
+  (let [children (set (filter #(linked? word1 %) words))
         next-words (s/difference (set words) (conj children word1))]
-    (do
-      (println " word1 " word1 " word2 " word2 " children " children " next words " next-words " path " path)
-      (if (doublets? word1 word2)
-        (conj path word2)
-        (mapcat #(find-path % word2 next-words (conj path %)) children)))))
+    (if (linked? word1 word2)
+      (conj path word2)
+      (mapcat #(find-path % word2 next-words (conj path %)) children))))
 
 (defn doublets [word1 word2]
-  (find-path word1 word2 words []))
+  (find-path word1 word2 words [word1]))
